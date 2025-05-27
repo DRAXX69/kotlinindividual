@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">hypercars</string>
+    <string name="title_activity_splash">splashActivity</string>
+</resources>
