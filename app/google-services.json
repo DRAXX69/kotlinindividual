@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "441342466088",
+    "firebase_url": "https://kotlin-3c7e1-default-rtdb.firebaseio.com",
+    "project_id": "kotlin-3c7e1",
+    "storage_bucket": "kotlin-3c7e1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441342466088:android:c58eaee147a412efea7d1d",
+        "android_client_info": {
+          "package_name": "com.example.hypercars"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXkAHERyWsEiFRDeLfrPwsOQxDVfet_WA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
