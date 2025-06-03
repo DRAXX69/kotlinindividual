@@ -3,4 +3,7 @@
     <string name="title_activity_splash">splashActivity</string>
     <string name="title_activity_nav_bar">NavBar</string>
     <string name="title_activity_nav_top_bar">NavTopBar</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_registration">RegistrationActivity</string>
+    <string name="title_activity_forget_password">ForgetPasswordActivity</string>
 </resources>
