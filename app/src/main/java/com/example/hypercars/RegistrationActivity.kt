@@ -72,7 +72,7 @@ class RegistrationActivity : ComponentActivity() {
 fun RegBody(innerPaddingValues: PaddingValues) {
 
     val repo = remember { UserRepositoryImpl() }
-    val UserViewModel = remember { UserViewModel(repo) }
+    val userViewModel = remember { UserViewModel(repo) }
 
     val context = LocalContext.current
     val activity = context as? Activity
@@ -194,7 +194,7 @@ fun RegBody(innerPaddingValues: PaddingValues) {
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(onClick = {
-            UserViewModel.register(email,password){
+            userViewModel.register(email,password){
                 success,message,userId ->
                 if (success){
                     var userModel = UserModel(
@@ -203,7 +203,7 @@ fun RegBody(innerPaddingValues: PaddingValues) {
                         "Male",
                          selectedOptionText
                     )
-                    UserViewModel.addUserToDatabase (userId,userModel){
+                    userViewModel.addUserToDatabase (userId,userModel){
                         success, message ->
                         if (success){
                             Toast.makeText(context,message, Toast.LENGTH_LONG).show()
