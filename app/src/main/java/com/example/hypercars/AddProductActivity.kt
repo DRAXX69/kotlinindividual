@@ -1,6 +1,8 @@
 package com.example.hypercars
 
+import android.app.Activity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -20,8 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.hypercars.model.ProductModel
+import com.example.hypercars.repository.ProductRepository
+import com.example.hypercars.repository.ProductRepositoryImpl
+import com.example.hypercars.viewmodel.ProductViewModel
 
 class AddProductActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +45,13 @@ fun AddProductBody() {
     var pName by remember { mutableStateOf("") }
     var pPrice by remember { mutableStateOf("") }
     var pDesc by remember { mutableStateOf("") }
+
+    val repo = remember { ProductRepositoryImpl() }
+    val viewModel = remember { ProductViewModel(repo) }
+
+    val context = LocalContext.current
+    val activity = context as? Activity
+
 
     Scaffold { innerPadding ->
         LazyColumn(
@@ -83,7 +97,20 @@ fun AddProductBody() {
 
                 Spacer(modifier = Modifier.height(12.dp))
                 Button(
-                    onClick = {},
+                    onClick = {
+                        val model = ProductModel("", pName,
+                            pPrice.toDouble(),pDesc)
+                        viewModel.addProduct (model){
+                            success,msg->
+                            if (success){
+                                Toast.makeText(context,msg, Toast.LENGTH_LONG).show()
+                                activity?.finish()
+                            }else{
+                                Toast.makeText(context,msg, Toast.LENGTH_LONG).show()
+                            }
+                        }
+
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Add Product")

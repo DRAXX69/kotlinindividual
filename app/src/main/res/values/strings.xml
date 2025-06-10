@@ -9,4 +9,5 @@
     <string name="title_activity_dashboard">DashboardActivity</string>
     <string name="title_activity_product_model">ProductModel</string>
     <string name="title_activity_add_product">AddProductActivity</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
 </resources>

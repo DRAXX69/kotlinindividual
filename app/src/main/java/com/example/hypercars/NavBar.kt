@@ -125,7 +125,7 @@ fun NavigationBody() {
 
                 },
 
-            )
+                )
         },
         bottomBar = {
             NavigationBar {
