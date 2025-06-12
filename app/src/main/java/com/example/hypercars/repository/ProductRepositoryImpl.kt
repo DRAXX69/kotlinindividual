@@ -1,5 +1,6 @@
 package com.example.hypercars.repository
 
+import android.util.Log
 import com.example.hypercars.model.ProductModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -83,6 +84,7 @@ class ProductRepositoryImpl : ProductRepository {
                     for (eachProduct in snapshot.children){
                         var products = eachProduct.getValue(ProductModel::class.java)
                         if (products !=null){
+                            Log.d("checkpoint",products.productName)
                             allProducts.add(products)
                         }
                     }
