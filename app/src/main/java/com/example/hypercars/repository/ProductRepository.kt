@@ -1,5 +1,7 @@
 package com.example.hypercars.repository
 
+import android.content.Context
+import android.net.Uri
 import com.example.hypercars.model.ProductModel
 
 interface ProductRepository {
@@ -33,6 +35,9 @@ interface ProductRepository {
 
     fun getAllProduct(callback: (Boolean, String,
                                  List<ProductModel?>) -> Unit)
+    fun uploadImage(context: Context,imageUri: Uri, callback: (String?) -> Unit)
+
+    fun getFileNameFromUri(context: Context,uri: Uri): String?
 
 
     //present - true

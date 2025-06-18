@@ -5,7 +5,10 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="RegistrationActivity">
+      <SelectionState runConfigName="DashboardActivity (4)">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="DashboardActivity (5)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="DashboardActivity">
@@ -14,10 +17,7 @@
       <SelectionState runConfigName="DashboardActivity (1)">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="DashboardActivity (2)">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="DashboardActivity (3)">
+      <SelectionState runConfigName="AddProductActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

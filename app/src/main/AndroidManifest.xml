@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- Add Permission in your android manifest -->
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
     <application
+        tools:replace="android:fullBackupContent"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -23,18 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".NavigationActivity"
-            android:exported="true"
-            android:label="@string/title_activity_navigation"
-            android:theme="@style/Theme.Hypercars">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
+<activity
             android:name=".AddProductActivity"
             android:exported="true"
             android:label="@string/title_activity_add_product"
@@ -56,18 +50,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ProductModel"
-            android:exported="true"
-            android:label="@string/title_activity_product_model"
-            android:theme="@style/Theme.Hypercars">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
+<activity
             android:name=".ForgetPasswordActivity"
             android:exported="true"
             android:label="@string/title_activity_forget_password"
@@ -100,19 +83,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".NavTopBar"
-            android:exported="true"
-            android:label="@string/title_activity_nav_top_bar"
-            android:theme="@style/Theme.Hypercars">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".NavBar"
+<activity
+            android:name=".NaviigationActivity"
             android:exported="true"
             android:label="@string/title_activity_nav_bar"
             android:theme="@style/Theme.Hypercars">
@@ -124,17 +96,6 @@
         </activity>
         <activity
             android:name=".splashActivity"
-            android:exported="true"
-            android:label="@string/title_activity_splash"
-            android:theme="@style/Theme.Hypercars">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.theme.splashActivity"
             android:exported="true"
             android:label="@string/title_activity_splash"
             android:theme="@style/Theme.Hypercars">
