@@ -1,4 +1,4 @@
-package com.example.hypercars
+package com.example.hypercars.view
 
 import android.app.Activity
 import android.content.Context

@@ -1,4 +1,4 @@
-package com.example.hypercars
+package com.example.hypercars.view
 
 import android.app.Activity
 import android.os.Bundle
@@ -25,11 +25,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.hypercars.model.ProductModel
 import com.example.hypercars.repository.ProductRepositoryImpl
-import com.example.hypercars.ui.theme.HypercarsTheme
 import com.example.hypercars.viewmodel.ProductViewModel
 
 class UpdateProductActivity : ComponentActivity() {

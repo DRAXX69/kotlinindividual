@@ -1,4 +1,4 @@
-package com.example.hypercars.ui.theme
+package com.example.hypercars.view.theme
 
 import androidx.compose.ui.graphics.Color
 
