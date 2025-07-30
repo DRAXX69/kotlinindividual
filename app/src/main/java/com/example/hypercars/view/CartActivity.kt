@@ -5,22 +5,52 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.graphics.Color
 import coil.compose.rememberAsyncImagePainter
+import com.example.hypercars.model.CartItemModel
+import com.example.hypercars.model.OrderModel
+import com.example.hypercars.repository.CartRepositoryImpl
+import com.example.hypercars.repository.OrderRepositoryImpl
+import com.example.hypercars.theme.HypercarsTheme
+import com.example.hypercars.viewmodel.CartViewModel
+import com.example.hypercars.viewmodel.CartViewModelFactory
+import com.example.hypercars.viewmodel.OrderViewModel
+import com.example.hypercars.viewmodel.OrderViewModelFactory
 
 class CartActivity : ComponentActivity() {
 
@@ -42,8 +72,9 @@ class CartActivity : ComponentActivity() {
         cartViewModel.loadCartItems()
 
         setContent {
-            // Wrap with your app theme if you have one e.g. SportsEquipmentStoreTheme
-            CartScreen(cartViewModel = cartViewModel, orderViewModel = orderViewModel)
+            HypercarsTheme {
+                CartScreen(cartViewModel = cartViewModel, orderViewModel = orderViewModel)
+            }
         }
     }
 }
@@ -58,6 +89,7 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
 
     val totalPrice = cartItems.sumOf { it.productPrice * it.quantity }
 
+    // Show Toast for order errors or success
     LaunchedEffect(orderError) {
         orderError?.let {
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
@@ -69,7 +101,9 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
         topBar = {
             TopAppBar(
                 title = { Text("Your Cart", fontSize = 20.sp) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF4CAF50))
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF4CAF50)  // Green color
+                )
             )
         },
         content = { padding ->
@@ -83,7 +117,9 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
                     Text(text = errorMessage ?: "", color = MaterialTheme.colorScheme.error)
                 }
 
-                LazyColumn(modifier = Modifier.weight(1f)) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f)
+                ) {
                     items(cartItems) { item ->
                         CartItemCard(
                             item = item,
@@ -119,9 +155,9 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
                         .padding(top = 12.dp),
                     onClick = {
                         if (cartItems.isNotEmpty()) {
-                            val userId = "USR001" // replace with actual user ID
+                            val userId = "USR001"  // Replace with actual user ID from auth
                             val order = OrderModel(
-                                orderId = "",
+                                orderId = "",  // will be set by Firebase on backend
                                 userId = userId,
                                 items = cartItems,
                                 totalAmount = totalPrice,
@@ -129,7 +165,8 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
                             )
                             orderViewModel.placeOrder(order)
                             Toast.makeText(context, "Order placed!", Toast.LENGTH_SHORT).show()
-                            // cartViewModel.clearCart() // Enable if you want to clear after order
+                            // Optionally clear cart after order placed
+                            // cartViewModel.clearCart()
                         } else {
                             Toast.makeText(context, "Cart is empty", Toast.LENGTH_SHORT).show()
                         }

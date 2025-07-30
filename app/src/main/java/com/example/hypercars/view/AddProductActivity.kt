@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -29,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -37,7 +43,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.hypercars.R
+import com.example.hypercars.model.ProductModel
+import com.example.hypercars.repository.ProductRepositoryImpl
 import com.example.hypercars.utils.ImageUtils
+import com.example.hypercars.viewmodel.ProductViewModel
 
 class AddProductActivity : ComponentActivity() {
     lateinit var imageUtils: ImageUtils
@@ -59,14 +68,18 @@ class AddProductActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddProductBody(
     selectedImageUri: Uri?,
     onPickImage: () -> Unit
 ) {
-    var productName by remember { mutableStateOf("") }
-    var productPrice by remember { mutableStateOf("") }
-    var productDescription by remember { mutableStateOf("") }
+    var pName by remember { mutableStateOf("") }
+    var pPrice by remember { mutableStateOf("") }
+    var pDesc by remember { mutableStateOf("") }
+    var pCategory by remember { mutableStateOf("Cricket") }
+
+    val categories = listOf("All", "Birthday", "Aniversary", "Occasions", "Other")
 
     val repo = remember { ProductRepositoryImpl() }
     val viewModel = remember { ProductViewModel(repo) }
@@ -74,13 +87,18 @@ fun AddProductBody(
     val context = LocalContext.current
     val activity = context as? Activity
 
+    var categoryExpanded by remember { mutableStateOf(false) }
+
     Scaffold { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .padding(10.dp)
+                .background(color = Color(0xFFA5D6A7)) // light green
         ) {
             item {
+                // Image Picker
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -102,7 +120,7 @@ fun AddProductBody(
                         )
                     } else {
                         Image(
-                            painterResource(R.drawable.porsche),
+                            painterResource(R.drawable.placeholder),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
@@ -110,26 +128,29 @@ fun AddProductBody(
                     }
                 }
 
+                // Product Name
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp),
                     shape = RoundedCornerShape(12.dp),
                     placeholder = { Text("Product Name") },
-                    value = productName,
-                    onValueChange = { productName = it }
+                    value = pName,
+                    onValueChange = { pName = it }
                 )
 
+                // Product Description
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 10.dp),
                     shape = RoundedCornerShape(12.dp),
                     placeholder = { Text("Product Description") },
-                    value = productDescription,
-                    onValueChange = { productDescription = it }
+                    value = pDesc,
+                    onValueChange = { pDesc = it }
                 )
 
+                // Product Price
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -137,10 +158,43 @@ fun AddProductBody(
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     placeholder = { Text("Product Price") },
-                    value = productPrice,
-                    onValueChange = { productPrice = it }
+                    value = pPrice,
+                    onValueChange = { pPrice = it }
                 )
 
+                // Category Dropdown
+                ExposedDropdownMenuBox(
+                    expanded = categoryExpanded,
+                    onExpandedChange = { categoryExpanded = !categoryExpanded },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                ) {
+                    OutlinedTextField(
+                        value = pCategory,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Category") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = categoryExpanded) },
+                        modifier = Modifier.menuAnchor()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = categoryExpanded,
+                        onDismissRequest = { categoryExpanded = false }
+                    ) {
+                        categories.forEach { cat ->
+                            DropdownMenuItem(
+                                text = { Text(cat) },
+                                onClick = {
+                                    pCategory = cat
+                                    categoryExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Submit Button
                 Button(
                     onClick = {
                         if (selectedImageUri != null) {
@@ -148,10 +202,11 @@ fun AddProductBody(
                                 if (imageUrl != null) {
                                     val model = ProductModel(
                                         "",
-                                        productName,
-                                        (productPrice.toIntOrNull() ?: 0).toDouble(),
-                                        productDescription,
-                                        imageUrl
+                                        pName,
+                                        pPrice.toDoubleOrNull() ?: 0.0,
+                                        pDesc,
+                                        imageUrl,
+                                        pCategory
                                     )
                                     viewModel.addProduct(model) { success, message ->
                                         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
@@ -168,8 +223,6 @@ fun AddProductBody(
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
-
-
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -184,9 +237,11 @@ fun AddProductBody(
 
 @Preview(showBackground = true)
 @Composable
-fun ProductBodyPreview() {
+fun PreviewAddProductBody() {
     AddProductBody(
-        selectedImageUri = null, // or pass a mock Uri if needed
-        onPickImage = {} // no-op
+        selectedImageUri = null,
+        onPickImage = {}
     )
 }
+
+

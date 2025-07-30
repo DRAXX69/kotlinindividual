@@ -4,10 +4,26 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +31,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
+import com.example.hypercars.model.OrderModel
+import com.example.hypercars.repository.OrderRepositoryImpl
+import com.example.hypercars.view.ui.theme.HypercarsTheme
+import com.example.hypercars.viewmodel.OrderViewModel
+import com.example.hypercars.viewmodel.OrderViewModelFactory
 
 class UserOrderActivity : ComponentActivity() {
 
@@ -31,7 +52,7 @@ class UserOrderActivity : ComponentActivity() {
         orderViewModel = ViewModelProvider(this, orderFactory)[OrderViewModel::class.java]
 
         setContent {
-             {
+            HypercarsTheme {
                 UserOrderScreen(userId, orderViewModel)
             }
         }
@@ -73,8 +94,8 @@ fun UserOrderScreen(userId: String, orderViewModel: OrderViewModel) {
                             order = order,
                             onCancel = {
                                 orderViewModel.cancelOrder(
-                                    order.userId,
-                                    userId = TODO()
+                                    order.orderId,
+                                    userId
                                 )
                                 Toast.makeText(context, "Order cancelled", Toast.LENGTH_SHORT).show()
                                 orderViewModel.loadOrdersByUser(userId) // refresh list

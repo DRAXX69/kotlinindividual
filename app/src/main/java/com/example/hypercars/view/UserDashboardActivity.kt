@@ -1,6 +1,5 @@
 package com.example.hypercars.view
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -8,17 +7,56 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,8 +68,24 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import coil.compose.AsyncImage
 import com.cloudinary.android.MediaManager
+import com.example.hypercars.repository.CartRepositoryImpl
+import com.example.hypercars.repository.OrderRepositoryImpl
+import com.example.hypercars.repository.ProductRepositoryImpl
+import com.example.hypercars.repository.UserRepositoryImpl
+import com.example.hypercars.repository.WishlistRepositoryImpl
+import com.example.hypercars.viewmodel.CartViewModel
+import com.example.hypercars.viewmodel.CartViewModelFactory
+import com.example.hypercars.viewmodel.OrderViewModel
+import com.example.hypercars.viewmodel.OrderViewModelFactory
+import com.example.hypercars.viewmodel.ProductViewModel
+import com.example.hypercars.viewmodel.UserViewModel
+import com.example.hypercars.viewmodel.UserViewModelFactory
+import com.example.hypercars.viewmodel.WishlistViewModel
+import com.example.hypercars.viewmodel.WishlistViewModelFactory
 import com.example.hypercars.R
-
+import com.example.hypercars.model.CartItemModel
+import com.example.hypercars.model.ProductModel
+import com.example.hypercars.model.WishlistItemModel
 
 class UserDashboardActivity : ComponentActivity() {
 
@@ -54,8 +108,12 @@ class UserDashboardActivity : ComponentActivity() {
 
 
         cartViewModel = ViewModelProvider(this, CartViewModelFactory(CartRepositoryImpl()))[CartViewModel::class.java]
-        wishlistViewModel = ViewModelProvider(this, WishlistViewModelFactory(WishlistRepositoryImpl()))[WishlistViewModel::class.java]
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(UserRepositoryImpl()))[UserViewModel::class.java]
+        wishlistViewModel = ViewModelProvider(this,
+            WishlistViewModelFactory(WishlistRepositoryImpl)
+        )[WishlistViewModel::class.java]
+        userViewModel = ViewModelProvider(this,
+            UserViewModelFactory(UserRepositoryImpl())
+        )[UserViewModel::class.java]
         orderViewModel = ViewModelProvider(this, OrderViewModelFactory(OrderRepositoryImpl()))[OrderViewModel::class.java]
 
         setContent {
@@ -67,7 +125,7 @@ class UserDashboardActivity : ComponentActivity() {
         super.onResume()
         val currentUserId = userViewModel.getCurrentUser()?.uid
         currentUserId?.let {
-            userViewModel.getUserById(it)
+            userViewModel.getUserByID(it)
             orderViewModel.loadOrdersByUser(it)
         }
     }
@@ -99,7 +157,7 @@ fun UserDashboardBody(
 
     LaunchedEffect(currentUserId) {
         currentUserId?.let {
-            userViewModel.getUserById(it)
+            userViewModel.getUserByID(it)
             orderViewModel.loadOrdersByUser(it)
         }
         productViewModel.getAllProducts()
@@ -122,8 +180,9 @@ fun UserDashboardBody(
                                 .clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("RetroCrugSports")
-                    }},
+                        Text("Giftshop")
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF4CAF50),
                     titleContentColor = Color.White
@@ -192,6 +251,15 @@ fun UserDashboardBody(
                 .padding(padding)
                 .fillMaxSize()
         ) {
+            // VISIBLE DASHBOARD HEADER
+            Text(
+                text = "DASHBOARD",
+                color = Color(0xFF4CAF50),
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 24.dp, bottom = 16.dp)
+            )
             UserHeader(
                 user = user
             )
@@ -207,7 +275,7 @@ fun UserDashboardBody(
                         .padding(horizontal = 12.dp, vertical = 4.dp)
                 )
 
-                val categories = listOf("All", "Cricket", "Football", "Rugby", "Tennis")
+                val categories = listOf("All", "Birthday", "Anniversary", "Occasions", "Others")
 
                 LazyRow(
                     modifier = Modifier
@@ -237,6 +305,10 @@ fun UserDashboardBody(
             if (loading) {
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
+                }
+            } else if (filteredProducts.isEmpty()) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("No products found. Please add products to see them here.", color = Color.Gray)
                 }
             } else {
                 LazyColumn(modifier = Modifier.padding(8.dp)) {
@@ -271,6 +343,12 @@ fun UserDashboardBody(
                         }
                     }
                 }
+            } else {
+                Text(
+                    text = "You have no orders yet.",
+                    modifier = Modifier.padding(12.dp),
+                    color = Color.Gray
+                )
             }
         }
     }
@@ -278,7 +356,7 @@ fun UserDashboardBody(
 
 @Composable
 fun UserHeader(
-    user: UserModel?
+    user: com.example.hypercars.model.UserModel?
 ) {
     Box(modifier = Modifier.padding(12.dp)) {
         Row(
@@ -300,7 +378,7 @@ fun ProductCard(
     product: ProductModel,
     cartViewModel: CartViewModel,
     wishlistViewModel: WishlistViewModel,
-    context: Context
+    context: android.content.Context
 ) {
     Card(
         modifier = Modifier
@@ -320,7 +398,7 @@ fun ProductCard(
                     .fillMaxWidth()
                     .height(180.dp),
                 contentScale = ContentScale.Crop,
-                error = painterResource(id = R.drawable.imageplaceholder)
+                error = painterResource(id = R.drawable.placeholder)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
