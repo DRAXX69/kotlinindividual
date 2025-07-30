@@ -37,10 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.hypercars.R
-import com.example.hypercars.model.ProductModel
-import com.example.hypercars.repository.ProductRepositoryImpl
 import com.example.hypercars.utils.ImageUtils
-import com.example.hypercars.viewmodel.ProductViewModel
 
 class AddProductActivity : ComponentActivity() {
     lateinit var imageUtils: ImageUtils

@@ -14,9 +14,9 @@ interface ProductRepository {
                    callback: (Boolean, String)-> Unit)
 
     fun updateProduct(
-                      productId: String,
-                      data: MutableMap<String, Any?>,
-                      callback: (Boolean, String) -> Unit
+        productId: String,
+        data: MutableMap<String, Any?>,
+        callback: (Boolean, String) -> Unit
     )
 
     fun deleteProduct(
@@ -35,7 +35,7 @@ interface ProductRepository {
 
     fun getAllProduct(callback: (Boolean, String,
                                  List<ProductModel?>) -> Unit)
-    fun uploadImage(context: Context,imageUri: Uri, callback: (String?) -> Unit)
+    fun uploadImage(context: Context, imageUri: Uri, callback: (String?) -> Unit)
 
     fun getFileNameFromUri(context: Context,uri: Uri): String?
 
@@ -43,5 +43,4 @@ interface ProductRepository {
     //present - true
     //absent - false
 //    fun attendance(name:String,callback: (Boolean) -> Unit)
-
 }

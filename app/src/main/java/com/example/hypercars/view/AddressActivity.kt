@@ -1,6 +1,4 @@
-
-
-package com.example.sportsequipmentstore.view
+package com.example.hypercars.view
 
 import android.os.Bundle
 import android.widget.Toast
@@ -17,9 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.sportsequipmentstore.model.AddressModel
-import com.example.sportsequipmentstore.repository.AddressRepositoryImpl
-import com.example.sportsequipmentstore.viewmodel.AddressViewModel
 import java.util.*
 
 class AddressActivity : ComponentActivity() {

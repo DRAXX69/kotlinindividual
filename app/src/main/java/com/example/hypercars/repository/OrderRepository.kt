@@ -1,8 +1,9 @@
-package com.example.sportsequipmentstore.repository
+package com.example.hypercars.repository
 
-import com.example.sportsequipmentstore.model.OrderModel
+import com.example.hypercars.model.OrderModel
 
 interface OrderRepository {
+
     fun placeOrder(order: OrderModel, callback: (Boolean, String) -> Unit)
     fun getOrdersByUser(userId: String, callback: (List<OrderModel>, Boolean, String) -> Unit)
     fun cancelOrder(orderId: String, callback: (Boolean, String) -> Unit)

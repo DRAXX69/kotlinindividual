@@ -1,6 +1,8 @@
 package com.example.hypercars.viewmodel
 
-import kotlin.jvm.java
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.hypercars.repository.UserRepository
 
 class UserViewModelFactory(
     private val repository: UserRepository

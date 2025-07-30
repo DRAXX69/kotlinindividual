@@ -1,18 +1,13 @@
+package com.example.hypercars.view
 
-package com.example.sportsequipmentstore.view
-
-import OrderViewModel
+import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -34,34 +29,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.cloudinary.android.MediaManager
-import com.cloudinary.android.callback.ErrorInfo
-import com.cloudinary.android.callback.UploadCallback
-import com.example.sportsequipmentstore.repository.*
-import com.example.sportsequipmentstore.viewmodel.*
-import com.example.sportsequipmentstore.LoginActivity
-import com.example.sportsequipmentstore.R
-import com.example.sportsequipmentstore.model.CartItemModel
-import com.example.sportsequipmentstore.model.ProductModel
-import com.example.sportsequipmentstore.model.WishlistItemModel
-import com.example.sportsequipmentstore.repository.CartRepositoryImpl
-import com.example.sportsequipmentstore.repository.OrderRepositoryImpl
-import com.example.sportsequipmentstore.repository.ProductRepositoryImpl
-import com.example.sportsequipmentstore.repository.UserRepositoryImplementation
-import com.example.sportsequipmentstore.repository.WishlistRepositoryImpl
-import com.example.sportsequipmentstore.viewmodel.CartViewModel
-import com.example.sportsequipmentstore.viewmodel.CartViewModelFactory
-import com.example.sportsequipmentstore.viewmodel.OrderViewModelFactory
-import com.example.sportsequipmentstore.viewmodel.ProductViewModel
-import com.example.sportsequipmentstore.viewmodel.UserViewModel
-import com.example.sportsequipmentstore.viewmodel.UserViewModelFactory
-import com.example.sportsequipmentstore.viewmodel.WishlistViewModel
-import com.example.sportsequipmentstore.viewmodel.WishlistViewModelFactory
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.database.FirebaseDatabase
+import com.example.hypercars.R
+
 
 class UserDashboardActivity : ComponentActivity() {
 
@@ -84,8 +54,8 @@ class UserDashboardActivity : ComponentActivity() {
 
 
         cartViewModel = ViewModelProvider(this, CartViewModelFactory(CartRepositoryImpl()))[CartViewModel::class.java]
-        wishlistViewModel = ViewModelProvider(this, WishlistViewModelFactory(WishlistRepositoryImpl))[WishlistViewModel::class.java]
-        userViewModel = ViewModelProvider(this, UserViewModelFactory(UserRepositoryImplementation()))[UserViewModel::class.java]
+        wishlistViewModel = ViewModelProvider(this, WishlistViewModelFactory(WishlistRepositoryImpl()))[WishlistViewModel::class.java]
+        userViewModel = ViewModelProvider(this, UserViewModelFactory(UserRepositoryImpl()))[UserViewModel::class.java]
         orderViewModel = ViewModelProvider(this, OrderViewModelFactory(OrderRepositoryImpl()))[OrderViewModel::class.java]
 
         setContent {
@@ -308,7 +278,7 @@ fun UserDashboardBody(
 
 @Composable
 fun UserHeader(
-    user: com.example.sportsequipmentstore.model.UserModel?
+    user: UserModel?
 ) {
     Box(modifier = Modifier.padding(12.dp)) {
         Row(
@@ -330,7 +300,7 @@ fun ProductCard(
     product: ProductModel,
     cartViewModel: CartViewModel,
     wishlistViewModel: WishlistViewModel,
-    context: android.content.Context
+    context: Context
 ) {
     Card(
         modifier = Modifier

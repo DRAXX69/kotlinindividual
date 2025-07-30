@@ -1,9 +1,10 @@
 package com.example.hypercars.repository
 
-import kotlin.collections.map
-import kotlin.jvm.java
+import com.example.hypercars.model.AddressModel
+import com.google.firebase.firestore.FirebaseFirestore
 
 class AddressRepositoryImpl : AddressRepository {
+
     private val db = FirebaseFirestore.getInstance()
     private val collection = db.collection("addresses")
 

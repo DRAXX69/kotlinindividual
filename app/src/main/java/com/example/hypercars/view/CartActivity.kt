@@ -1,8 +1,5 @@
+package com.example.hypercars.view
 
-
-package com.example.sportsequipmentstore.view
-
-import OrderViewModel
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -10,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
@@ -25,14 +21,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import coil.compose.rememberAsyncImagePainter
-import com.example.sportsequipmentstore.model.CartItemModel
-import com.example.sportsequipmentstore.model.OrderModel
-import com.example.sportsequipmentstore.repository.CartRepositoryImpl
-import com.example.sportsequipmentstore.repository.OrderRepositoryImpl
-import com.example.sportsequipmentstore.viewmodel.CartViewModel
-import com.example.sportsequipmentstore.viewmodel.CartViewModelFactory
-import com.example.sportsequipmentstore.viewmodel.OrderViewModelFactory
-import com.example.sportsequipmentstore.ui.theme.SportsEquipmentStoreTheme
 
 class CartActivity : ComponentActivity() {
 
@@ -54,9 +42,8 @@ class CartActivity : ComponentActivity() {
         cartViewModel.loadCartItems()
 
         setContent {
-            SportsEquipmentStoreTheme {
-                CartScreen(cartViewModel = cartViewModel, orderViewModel = orderViewModel)
-            }
+            // Wrap with your app theme if you have one e.g. SportsEquipmentStoreTheme
+            CartScreen(cartViewModel = cartViewModel, orderViewModel = orderViewModel)
         }
     }
 }
@@ -71,7 +58,6 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
 
     val totalPrice = cartItems.sumOf { it.productPrice * it.quantity }
 
-    // Show Toast for order errors or success
     LaunchedEffect(orderError) {
         orderError?.let {
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
@@ -83,9 +69,7 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
         topBar = {
             TopAppBar(
                 title = { Text("Your Cart", fontSize = 20.sp) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF4CAF50)  // Green color
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF4CAF50))
             )
         },
         content = { padding ->
@@ -99,9 +83,7 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
                     Text(text = errorMessage ?: "", color = MaterialTheme.colorScheme.error)
                 }
 
-                LazyColumn(
-                    modifier = Modifier.weight(1f)
-                ) {
+                LazyColumn(modifier = Modifier.weight(1f)) {
                     items(cartItems) { item ->
                         CartItemCard(
                             item = item,
@@ -137,9 +119,9 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
                         .padding(top = 12.dp),
                     onClick = {
                         if (cartItems.isNotEmpty()) {
-                            val userId = "USR001"  // Replace with actual user ID from auth
+                            val userId = "USR001" // replace with actual user ID
                             val order = OrderModel(
-                                orderId = "",  // will be set by Firebase on backend
+                                orderId = "",
                                 userId = userId,
                                 items = cartItems,
                                 totalAmount = totalPrice,
@@ -147,8 +129,7 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
                             )
                             orderViewModel.placeOrder(order)
                             Toast.makeText(context, "Order placed!", Toast.LENGTH_SHORT).show()
-                            // Optionally clear cart after order placed
-                            // cartViewModel.clearCart()
+                            // cartViewModel.clearCart() // Enable if you want to clear after order
                         } else {
                             Toast.makeText(context, "Cart is empty", Toast.LENGTH_SHORT).show()
                         }

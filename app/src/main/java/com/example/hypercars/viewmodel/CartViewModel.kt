@@ -1,4 +1,10 @@
-package com.example.hypercars.viewmodel 
+package com.example.hypercars.viewmodel
+
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.example.hypercars.model.CartItemModel
+import com.example.hypercars.repository.CartRepository
 
 class CartViewModel(private val cartRepository: CartRepository) : ViewModel() {
 

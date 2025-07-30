@@ -1,10 +1,10 @@
 package com.example.hypercars.repository
 
-import kotlinx.coroutines.flow.Flowimport kotlinx.coroutines.flow.MutableStateFlowimport kotlin.collections.none
-import kotlin.collections.removeAll
-import kotlin.collections.toList
+import com.example.hypercars.model.WishlistItemModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
-object WishlistRepositoryImpl : WishlistRepository {
+object WishlistRepositoryImpl {
 
     private val wishlist = mutableListOf<WishlistItemModel>()
     private val wishlistFlow = MutableStateFlow<List<WishlistItemModel>>(emptyList())

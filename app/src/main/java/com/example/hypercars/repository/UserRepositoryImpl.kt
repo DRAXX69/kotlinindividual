@@ -3,126 +3,105 @@ package com.example.hypercars.repository
 import com.example.hypercars.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 
-class UserRepositoryImpl : UserRepository {
+class UserRepositoryImpl : UserRepository{
 
-    val auth : FirebaseAuth = FirebaseAuth.getInstance()
-    val database : FirebaseDatabase = FirebaseDatabase.getInstance()
-    val ref : DatabaseReference = database.reference.child("users")
+
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val db = FirebaseDatabase.getInstance().getReference("users")
 
     override fun login(
         email: String,
         password: String,
-        callback: (Boolean, String) -> Unit
+        callback: (Boolean, String, FirebaseUser?) -> Unit
     ) {
-        auth.signInWithEmailAndPassword(email,password)
-            .addOnCompleteListener {
-                if (it.isSuccessful){
-                    callback(true,"Login successfully")
-                }else{
-                    callback(false,"${it.exception?.message}")
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(true, "Login successful", auth.currentUser)
+                } else {
+                    callback(false, task.exception?.message ?: "Login failed", null)
                 }
-
             }
     }
 
     override fun register(
         email: String,
         password: String,
-        callback: (Boolean, String, String) -> Unit
+        callback: (Boolean, String, FirebaseUser?) -> Unit
     ) {
-        auth.signInWithEmailAndPassword(email,password)
-            .addOnCompleteListener {
-                if (it.isSuccessful){
-                    callback(true,"Register successfully",
-                        "${auth.currentUser?.uid}")
-                }else{
-                    callback(false,"${it.exception?.message}","")
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(true, "Registration successful", auth.currentUser)
+                } else {
+                    callback(false, task.exception?.message ?: "Registration failed", null)
                 }
-
             }
     }
-//create
-    override fun addUserToDatabase(
-        userId: String,
-        model: UserModel,
-        callback: (Boolean, String) -> Unit
-    ) {
-        ref.child(userId).setValue(model).addOnCompleteListener {
-            if (it.isSuccessful){
-                callback(true,"user added")
-            }else{
-                callback(false,"${it.exception?.message}")
+
+    override fun forgetPassword(email: String, callback: (Boolean, String) -> Unit) {
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(true, "Password reset email sent")
+                } else {
+                    callback(false, task.exception?.message ?: "Failed to send reset email")
+                }
             }
-        }
     }
 
     override fun updateProfile(
-        userId: String,
+        userID: String,
         data: MutableMap<String, Any?>,
         callback: (Boolean, String) -> Unit
     ) {
-        ref.child(userId).setValue(data).addOnCompleteListener {
-            if (it.isSuccessful){
-                callback(true,"user updated")
-            }else{
-                callback(false,"${it.exception?.message}")
+        db.child(userID).updateChildren(data)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(true, "Profile updated")
+                } else {
+                    callback(false, task.exception?.message ?: "Update failed")
+                }
             }
-        }
     }
 
-    override fun forgetPassword(
-        email: String,
+    override fun getCurrentUser(): FirebaseUser? = auth.currentUser
+
+    override fun addUserToDatabase(
+        userID: String,
+        model: UserModel,
         callback: (Boolean, String) -> Unit
     ) {
-        auth.signInWithEmailLink(email,"")
-            .addOnCompleteListener {
-                if (it.isSuccessful){
-                    callback(true,"forget password? send email",
-                        )
-                }else{
-                    callback(false,"${it.exception?.message}")
+        db.child(userID).setValue(model)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    callback(true, "User added to database")
+                } else {
+                    callback(false, task.exception?.message ?: "Failed to add user")
                 }
-
             }
     }
 
-    override fun getCurrentUser(): FirebaseUser? {
-        return  auth.currentUser
-    }
-
-    override fun getUserById(
-        userId: String,
+    override fun getUserByID(
+        userID: String,
         callback: (UserModel?, Boolean, String) -> Unit
     ) {
-        ref.child(userId).addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()){
-                    val users = snapshot.getValue(UserModel::class.java)
-                    if (users != null){
-                        callback(users,true,"data fetched")
-                    }
-                }
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                callback(null,false,error.message)
-            }
-        })
+        db.child(userID).get().addOnSuccessListener { snapshot ->
+            val user = snapshot.getValue(UserModel::class.java)
+            callback(user, true, "User fetched")
+        }.addOnFailureListener {
+            callback(null, false, it.message ?: "Error fetching user")
+        }
     }
 
     override fun logout(callback: (Boolean, String) -> Unit) {
         try {
             auth.signOut()
-            callback(true,"logout successful")
-        }catch (e: Exception){
-            callback(false,"${e.message}")
+            callback(true, "Logged out successfully")
+        } catch (e: Exception) {
+            callback(false, e.message ?: "Logout failed")
         }
     }
 }

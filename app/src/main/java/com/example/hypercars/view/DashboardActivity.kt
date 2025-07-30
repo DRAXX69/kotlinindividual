@@ -34,8 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.hypercars.repository.ProductRepositoryImpl
-import com.example.hypercars.viewmodel.ProductViewModel
 
 class DashboardActivity : ComponentActivity() {
 

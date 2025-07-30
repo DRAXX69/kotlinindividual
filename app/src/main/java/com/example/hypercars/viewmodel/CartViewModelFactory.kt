@@ -1,6 +1,8 @@
 package com.example.hypercars.viewmodel
 
-import kotlin.jvm.java
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.hypercars.repository.CartRepository
 
 class CartViewModelFactory(private val repository: CartRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -11,3 +13,5 @@ class CartViewModelFactory(private val repository: CartRepository) : ViewModelPr
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+
+

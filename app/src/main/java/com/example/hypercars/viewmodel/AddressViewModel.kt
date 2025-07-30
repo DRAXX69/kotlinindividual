@@ -1,4 +1,8 @@
-package com.example.hypercars.viewmodel 
+package com.example.hypercars.viewmodel
+
+import androidx.lifecycle.ViewModel
+import com.example.hypercars.model.AddressModel
+import com.example.hypercars.repository.AddressRepository
 
 class AddressViewModel(private val repository: AddressRepository) : ViewModel() {
 

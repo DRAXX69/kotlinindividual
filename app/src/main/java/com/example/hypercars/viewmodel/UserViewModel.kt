@@ -7,23 +7,24 @@ import com.example.hypercars.model.UserModel
 import com.example.hypercars.repository.UserRepository
 import com.google.firebase.auth.FirebaseUser
 
-class UserViewModel(val repo : UserRepository) : ViewModel() {
+class UserViewModel(val repo: UserRepository) : ViewModel() {
+
     fun login(
         email: String, password: String,
-        callback: (Boolean, String) -> Unit
+        callback: (Boolean, String, FirebaseUser?) -> Unit
     ) {
         repo.login(email, password, callback)
     }
 
-    //authentication function
+    // Authentication function
     fun register(
         email: String, password: String,
-        callback: (Boolean, String, String) -> Unit
+        callback: (Boolean, String, FirebaseUser?) -> Unit
     ) {
         repo.register(email, password, callback)
     }
 
-    //database function
+    // Add user to database
     fun addUserToDatabase(
         userId: String, model: UserModel,
         callback: (Boolean, String) -> Unit
@@ -48,23 +49,20 @@ class UserViewModel(val repo : UserRepository) : ViewModel() {
         return repo.getCurrentUser()
     }
 
-
     private val _users = MutableLiveData<UserModel?>()
-
     val users: LiveData<UserModel?> get() = _users
 
-    fun getUserById(
-        userId: String,
-    ) {
-        repo.getUserById(userId) { users, success, message ->
-            if (success) {
-                if (success && users != null) {
-                    _users.postValue(users)
-                } else {
-                    _users.postValue(null)
-                }
+    fun getUserByID(userId: String) {
+        repo.getUserByID(userId) { user, success, message ->
+            if (success && user != null) {
+                _users.postValue(user)
+            } else {
+                _users.postValue(null)
             }
-
         }
+    }
+
+    fun logout(callback: (Boolean, String) -> Unit) {
+        repo.logout(callback)
     }
 }

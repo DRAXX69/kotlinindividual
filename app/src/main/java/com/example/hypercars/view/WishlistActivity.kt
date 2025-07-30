@@ -1,5 +1,4 @@
-
-package com.example.sportsequipmentstore.view
+package com.example.hypercars.view
 
 import android.os.Bundle
 import android.widget.Toast
@@ -8,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,14 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
-import com.example.sportsequipmentstore.model.CartItemModel
-import com.example.sportsequipmentstore.model.WishlistItemModel
-import com.example.sportsequipmentstore.repository.CartRepositoryImpl
-import com.example.sportsequipmentstore.repository.WishlistRepositoryImpl
-import com.example.sportsequipmentstore.viewmodel.CartViewModel
-import com.example.sportsequipmentstore.viewmodel.CartViewModelFactory
-import com.example.sportsequipmentstore.viewmodel.WishlistViewModel
-import com.example.sportsequipmentstore.viewmodel.WishlistViewModelFactory
 
 class WishlistActivity : ComponentActivity() {
     private lateinit var wishlistViewModel: WishlistViewModel

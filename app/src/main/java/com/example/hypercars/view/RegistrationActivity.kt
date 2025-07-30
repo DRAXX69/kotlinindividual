@@ -43,9 +43,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import com.example.hypercars.model.UserModel
-import com.example.hypercars.repository.UserRepositoryImpl
-import com.example.hypercars.viewmodel.UserViewModel
 
 class RegistrationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

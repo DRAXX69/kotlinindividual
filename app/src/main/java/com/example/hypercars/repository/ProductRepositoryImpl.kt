@@ -2,10 +2,8 @@ package com.example.hypercars.repository
 
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
 import android.os.Looper
 import android.provider.OpenableColumns
-import android.util.Log
 import com.cloudinary.Cloudinary
 import com.cloudinary.utils.ObjectUtils
 import com.example.hypercars.model.ProductModel
@@ -15,17 +13,19 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.io.InputStream
 import java.util.concurrent.Executors
+import java.util.logging.Handler
 
-class ProductRepositoryImpl : ProductRepository {
+class ProductRepositoryImpl: ProductRepository {
 
-    val database = FirebaseDatabase.getInstance()
-    val ref = database.reference.child("products")
+    val database=FirebaseDatabase.getInstance()
+    val ref =database.reference.child("products")
+
 
     private val cloudinary = Cloudinary(
         mapOf(
-            "cloud_name" to "dde2pbccs",
-            "api_key" to "944295238457168",
-            "api_secret" to "01BItKSvyAAGIkKEbczBcWKCU5A"
+            "cloud_name" to "dx6urmt6f",
+            "api_key" to "486349949134958",
+            "api_secret" to "l_7BCHZ3hLVOIhgfY8oDRJI78I8"
         )
     )
 
@@ -77,19 +77,14 @@ class ProductRepositoryImpl : ProductRepository {
         }
         return fileName
     }
-
-    override fun addProduct(
-        model: ProductModel,
-        callback: (Boolean, String) -> Unit
-    ) {
-        val id = ref.push().key.toString()
-        model.productId = id
-        ref.child(model.productId).setValue(model).addOnCompleteListener {
+    override fun addProduct(model: ProductModel, callback: (Boolean, String) -> Unit) {
+        val id=ref.push().key.toString()
+        model.productId=id
+        ref.child(model.productId).setValue(model).addOnCompleteListener{
             if (it.isSuccessful){
                 callback(true,"product added successfully")
-            }else{
-                callback(false,"${it.exception?.message}")
-            }
+            }else{callback(false,"${it.exception?.message}")}
+
         }
     }
 
@@ -98,21 +93,18 @@ class ProductRepositoryImpl : ProductRepository {
         data: MutableMap<String, Any?>,
         callback: (Boolean, String) -> Unit
     ) {
-        ref.child(productId).updateChildren(data).addOnCompleteListener {
-
+        ref.child(productId).updateChildren(data).addOnCompleteListener{
             if (it.isSuccessful){
-                callback(true,"product updated successfully")
+                callback(true,"product added successfully")
             }else{
                 callback(false,"${it.exception?.message}")
             }
         }
     }
 
-    override fun deleteProduct(
-        productId: String,
-        callback: (Boolean, String) -> Unit
-    ) {
-        ref.child(productId).removeValue().addOnCompleteListener {
+    override fun deleteProduct(productId: String, callback: (Boolean, String) -> Unit) {
+
+        ref.child(productId).removeValue().addOnCompleteListener{
             if (it.isSuccessful){
                 callback(true,"product deleted successfully")
             }else{
@@ -124,22 +116,22 @@ class ProductRepositoryImpl : ProductRepository {
     override fun getProductById(
         productId: String,
         callback: (Boolean, String, ProductModel?) -> Unit
-    ) {
-        ref.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()){
-                    val product = snapshot.getValue(ProductModel::class.java)
-                    if (product != null){
-                        callback(true,"product fetched",product)
-                    }
+    ) {ref.addValueEventListener(object : ValueEventListener {
+        override fun onDataChange(snapshot: DataSnapshot) {
+            if (snapshot.exists()){
+                val product = snapshot.getValue(ProductModel::class.java)
+                if (product != null){
+                    callback(true,"product fetched",product)
                 }
-
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                callback(false,error.message,null)
-            }
-        })
+        }
+
+        override fun onCancelled(error: DatabaseError) {
+            callback(false,error.message,null)
+        }
+    })
+
     }
 
     override fun getAllProduct(callback: (Boolean, String, List<ProductModel?>) -> Unit) {
@@ -150,7 +142,6 @@ class ProductRepositoryImpl : ProductRepository {
                     for (eachProduct in snapshot.children){
                         var products = eachProduct.getValue(ProductModel::class.java)
                         if (products !=null){
-                            Log.d("checkpoint",products.productName)
                             allProducts.add(products)
                         }
                     }

@@ -1,6 +1,8 @@
 package com.example.hypercars.viewmodel
 
-import kotlin.jvm.java
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.hypercars.repository.OrderRepository
 
 class OrderViewModelFactory(private val orderRepository: OrderRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

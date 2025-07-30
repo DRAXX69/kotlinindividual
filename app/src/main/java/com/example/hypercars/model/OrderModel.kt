@@ -1,4 +1,4 @@
-package com.example.hypercars.model 
+package com.example.hypercars.model
 
 data class OrderModel(
     var orderId: String = "",      // Changed from val to var

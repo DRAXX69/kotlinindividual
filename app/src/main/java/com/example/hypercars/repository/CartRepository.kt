@@ -1,6 +1,6 @@
-package com.example.sportsequipmentstore.repository
+package com.example.hypercars.repository
 
-import com.example.sportsequipmentstore.model.CartItemModel
+import com.example.hypercars.model.CartItemModel
 
 interface CartRepository {
     fun addToCart(item: CartItemModel, callback: (Boolean, String) -> Unit)
