@@ -101,15 +101,15 @@ fun WishlistScreen(
                         .fillMaxSize()
                         .padding(8.dp)
                 ) {
-                    items(wishlistItems) { item ->
+                    items(wishlistItems.size) { index ->
                         WishlistItemCard(
-                            item = item,
+                            item = wishlistItems[index],
                             onRemove = {
-                                wishlistViewModel.removeFromWishlist(item)
+                                wishlistViewModel.removeFromWishlist(wishlistItems[index])
                                 Toast.makeText(context, "Removed from wishlist", Toast.LENGTH_SHORT).show()
                             },
                             onAddToCart = {
-                                val cartItem = item.toCartItem()
+                                val cartItem = wishlistItems[index].toCartItem()
                                 cartViewModel.addToCart(cartItem)
                                 Toast.makeText(context, "Added to cart", Toast.LENGTH_SHORT).show()
                             }

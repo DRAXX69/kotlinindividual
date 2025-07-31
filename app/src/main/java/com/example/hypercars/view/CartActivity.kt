@@ -120,19 +120,19 @@ fun CartScreen(cartViewModel: CartViewModel, orderViewModel: OrderViewModel) {
                 LazyColumn(
                     modifier = Modifier.weight(1f)
                 ) {
-                    items(cartItems) { item ->
+                    items(cartItems.size) { index ->
                         CartItemCard(
-                            item = item,
+                            item = cartItems[index],
                             onIncrease = {
-                                cartViewModel.updateQuantity(item.id, item.quantity + 1)
+                                cartViewModel.updateQuantity(cartItems[index].id, cartItems[index].quantity + 1)
                             },
                             onDecrease = {
-                                if (item.quantity > 1) {
-                                    cartViewModel.updateQuantity(item.id, item.quantity - 1)
+                                if (cartItems[index].quantity > 1) {
+                                    cartViewModel.updateQuantity(cartItems[index].id, cartItems[index].quantity - 1)
                                 }
                             },
                             onRemove = {
-                                cartViewModel.removeCartItem(item.id)
+                                cartViewModel.removeCartItem(cartItems[index].id)
                             }
                         )
                     }

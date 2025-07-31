@@ -89,12 +89,12 @@ fun UserOrderScreen(userId: String, orderViewModel: OrderViewModel) {
                 }
             } else {
                 LazyColumn {
-                    items(orders) { order ->
+                    items(orders.size) { index ->
                         OrderCardWithCancel(
-                            order = order,
+                            order = orders[index],
                             onCancel = {
                                 orderViewModel.cancelOrder(
-                                    order.orderId,
+                                    orders[index].orderId,
                                     userId
                                 )
                                 Toast.makeText(context, "Order cancelled", Toast.LENGTH_SHORT).show()

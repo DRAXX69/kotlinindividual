@@ -86,6 +86,7 @@ import com.example.hypercars.R
 import com.example.hypercars.model.CartItemModel
 import com.example.hypercars.model.ProductModel
 import com.example.hypercars.model.WishlistItemModel
+import com.example.hypercars.repository.WishlistRepository
 
 class UserDashboardActivity : ComponentActivity() {
 

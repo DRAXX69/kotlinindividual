@@ -2,6 +2,7 @@ package com.example.hypercars.repository
 
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
 import android.os.Looper
 import android.provider.OpenableColumns
 import com.cloudinary.Cloudinary
@@ -13,7 +14,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import java.io.InputStream
 import java.util.concurrent.Executors
-import java.util.logging.Handler
 
 class ProductRepositoryImpl: ProductRepository {
 

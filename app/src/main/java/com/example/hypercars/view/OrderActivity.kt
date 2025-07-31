@@ -77,8 +77,8 @@ fun OrderScreen(orderViewModel: OrderViewModel) {
                 Text("No orders found.", style = MaterialTheme.typography.bodyLarge)
             } else {
                 LazyColumn {
-                    items(orders) { order ->
-                        OrderCard(order)
+                    items(orders.size) { index ->
+                        OrderCard(orders[index])
                     }
                 }
             }

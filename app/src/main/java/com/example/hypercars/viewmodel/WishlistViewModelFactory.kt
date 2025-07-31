@@ -2,6 +2,7 @@ package com.example.hypercars.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.hypercars.repository.WishlistRepository
 import com.example.hypercars.repository.WishlistRepositoryImpl
 
 class WishlistViewModelFactory(

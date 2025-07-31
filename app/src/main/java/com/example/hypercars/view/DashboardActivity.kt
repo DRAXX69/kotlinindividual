@@ -140,16 +140,16 @@ fun DashboardBody() {
                         )
                     }
                 } else {
-                    items(products.value) { eachProduct ->
+                    items(products.value.size) { index ->
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(15.dp)
                         ) {
                             Column(modifier = Modifier.padding(15.dp)) {
-                                Text(text = eachProduct?.productName ?: "No Name")
-                                Text(text = "Rs. ${eachProduct?.productPrice ?: 0}")
-                                Text(text = eachProduct?.productDescription ?: "")
+                                Text(text = products.value[index]?.productName ?: "No Name")
+                                Text(text = "Rs. ${products.value[index]?.productPrice ?: 0}")
+                                Text(text = products.value[index]?.productDescription ?: "")
 
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -158,7 +158,7 @@ fun DashboardBody() {
                                     IconButton(
                                         onClick = {
                                             val intent = Intent(context, UpdateProductActivity::class.java)
-                                            intent.putExtra("productId", eachProduct?.productId ?: "")
+                                            intent.putExtra("productId", products.value[index]?.productId ?: "")
                                             context.startActivity(intent)
                                         },
                                         colors = IconButtonDefaults.iconButtonColors(
@@ -170,7 +170,7 @@ fun DashboardBody() {
 
                                     IconButton(
                                         onClick = {
-                                            viewModel.deleteProduct(eachProduct?.productId.toString()) { success, message ->
+                                            viewModel.deleteProduct(products.value[index]?.productId.toString()) { success, message ->
                                                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                                             }
                                         },
