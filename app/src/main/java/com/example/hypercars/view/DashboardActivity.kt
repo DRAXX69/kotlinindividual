@@ -7,54 +7,36 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Green
+import androidx.compose.ui.graphics.Color.Companion.Red
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.hypercars.R
+import com.example.hypercars.model.ProductModel
 import com.example.hypercars.repository.ProductRepositoryImpl
 import com.example.hypercars.viewmodel.ProductViewModel
 
 class DashboardActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-
         setContent {
             DashboardBody()
         }
@@ -70,8 +52,8 @@ fun DashboardBody() {
     val repo = remember { ProductRepositoryImpl() }
     val viewModel = remember { ProductViewModel(repo) }
 
-    val products = viewModel.allProducts.observeAsState(initial = emptyList())
-    val loading = viewModel.loading.observeAsState(initial = true)
+    val products by viewModel.allProducts.observeAsState(initial = emptyList())
+    val loading by viewModel.loading.observeAsState(initial = true)
 
     LaunchedEffect(Unit) {
         viewModel.getAllProducts()
@@ -82,16 +64,15 @@ fun DashboardBody() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Admin Dashboard", color = Color.White) },
+                title = { Text("Admin Dashboard", color = Color.Black) },
                 actions = {
                     IconButton(onClick = {
-                        // If using Firebase: FirebaseAuth.getInstance().signOut()
                         val intent = Intent(context, LoginActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         context.startActivity(intent)
                         Toast.makeText(context, "Logged out successfully", Toast.LENGTH_SHORT).show()
                     }) {
-                        Icon(Icons.Default.ExitToApp, contentDescription = "Logout", tint = Color.White)
+                        Icon(Icons.Default.ExitToApp, contentDescription = "Logout", tint = Color.Black)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Green)
@@ -106,7 +87,7 @@ fun DashboardBody() {
             }
         },
         bottomBar = {
-            NavigationBar(containerColor = Green) {
+            NavigationBar(containerColor = Red) {
                 NavigationBarItem(
                     selected = selectedTab == 0,
                     onClick = { selectedTab = 0 },
@@ -129,63 +110,107 @@ fun DashboardBody() {
             LazyColumn(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .background(color = Green)
-            ) {
-                if (loading.value) {
-                    item {
-                        Text(
-                            text = "Loading products...",
-                            color = Color.White,
-                            modifier = Modifier.padding(16.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color.Black, Color.Red)
                         )
+                    )
+            ) {
+                if (loading || products.isEmpty()) {
+                    items(3) { index ->
+                        val cars = listOf(
+                            Triple("Bugatti Chiron", "Top Speed: 420 km/h", "$5,500,000"),
+                            Triple("Konigsegg Jesko", "Top Speed: 483 km/h", "$5,000,000"),
+                            Triple("Lamborghini Sian", "Hybrid V12, 819 HP", "$4,000,000")
+                        )
+                        val images = listOf(
+                            R.drawable.chiron,
+                            R.drawable.jesko,
+                            R.drawable.sian
+                        )
+                        val (name, specs, price) = cars[index]
+                        ProductCard(name, specs, price, {}, {}, false, images[index])
                     }
                 } else {
-                    items(products.value.size) { index ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(15.dp)
-                        ) {
-                            Column(modifier = Modifier.padding(15.dp)) {
-                                Text(text = products.value[index]?.productName ?: "No Name")
-                                Text(text = "Rs. ${products.value[index]?.productPrice ?: 0}")
-                                Text(text = products.value[index]?.productDescription ?: "")
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.End
-                                ) {
-                                    IconButton(
-                                        onClick = {
-                                            val intent = Intent(context, UpdateProductActivity::class.java)
-                                            intent.putExtra("productId", products.value[index]?.productId ?: "")
-                                            context.startActivity(intent)
-                                        },
-                                        colors = IconButtonDefaults.iconButtonColors(
-                                            contentColor = Color.Black
-                                        )
-                                    ) {
-                                        Icon(Icons.Default.Edit, contentDescription = "Edit Product")
+                    items(products) { product ->
+                        product?.let {
+                            ProductCard(
+                                title = it.productName,
+                                subtitle = it.productDescription,
+                                price = "Rs. ${it.productPrice}",
+                                onEdit = {
+                                    val intent = Intent(context, UpdateProductActivity::class.java)
+                                    intent.putExtra("productId", it.productId)
+                                    context.startActivity(intent)
+                                },
+                                onDelete = {
+                                    viewModel.deleteProduct(it.productId) { success, message ->
+                                        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                                     }
-
-                                    IconButton(
-                                        onClick = {
-                                            viewModel.deleteProduct(products.value[index]?.productId.toString()) { success, message ->
-                                                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-                                            }
-                                        },
-                                        colors = IconButtonDefaults.iconButtonColors(
-                                            contentColor = Color.Red
-                                        )
-                                    ) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Delete Product")
-                                    }
-                                }
-                            }
+                                },
+                                editable = true,
+                                imageRes = R.drawable.retrocruglogo
+                            )
                         }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun ProductCard(
+    title: String,
+    subtitle: String,
+    price: String,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    editable: Boolean,
+    imageRes: Int
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(15.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(15.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = title, color = Color.Black)
+                Text(text = subtitle, color = Color.DarkGray)
+                Text(text = price, color = Color(0xFF1B5E20))
+
+                if (editable) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        IconButton(
+                            onClick = onEdit,
+                            colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Black)
+                        ) {
+                            Icon(Icons.Default.Edit, contentDescription = "Edit Product")
+                        }
+
+                        IconButton(
+                            onClick = onDelete,
+                            colors = IconButtonDefaults.iconButtonColors(contentColor = Color.Red)
+                        ) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete Product")
+                        }
+                    }
+                }
+            }
+
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = title,
+                modifier = Modifier.size(80.dp),
+                contentScale = ContentScale.Crop
+            )
         }
     }
 }

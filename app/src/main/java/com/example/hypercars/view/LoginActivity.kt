@@ -41,9 +41,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -94,14 +96,17 @@ fun LoginBody() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(color = Color(0xFFFF69B4)), // Hot pink
-
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Red, Color.Black)
+                    )
+                ),
             horizontalAlignment = Alignment.CenterHorizontally
         )
         {
             Spacer(modifier = Modifier.height(50.dp))
             Text(
-                text = "GiftShop",
+                text = "Hypercars showcase",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
@@ -112,11 +117,11 @@ fun LoginBody() {
             )
 
             Image(
-                painter = painterResource(R.drawable.retrocruglogo),
+                painter = painterResource(R.drawable.porsche),
                 contentDescription = null
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             OutlinedTextField(
                 value = email,
@@ -124,11 +129,13 @@ fun LoginBody() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp),
-                placeholder = { Text(text = "Enter email") },
+                placeholder = { Text(text = "Enter email", color = Color.White) },
                 shape = RoundedCornerShape(12.dp),
                 prefix = { Icon(Icons.Default.Email, contentDescription = null) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                textStyle = TextStyle(color = Color.White)
             )
+
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -138,7 +145,7 @@ fun LoginBody() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp),
-                placeholder = { Text(text = "Enter password") },
+                placeholder = { Text(text = "Enter password", color = Color.White) },
                 shape = RoundedCornerShape(12.dp),
                 prefix = { Icon(Icons.Default.Lock, contentDescription = null) },
                 suffix = {
@@ -152,8 +159,10 @@ fun LoginBody() {
                     )
                 },
                 visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                textStyle = TextStyle(color = Color.White)
             )
+
 
             Spacer(modifier = Modifier.height(10.dp))
 
@@ -169,7 +178,9 @@ fun LoginBody() {
                         checked = rememberMe,
                         onCheckedChange = { rememberMe = it }
                     )
-                    Text("Remember me")
+                    Text(text = "Remember me",
+                        color = Color.White
+                        )
                 }
 
                 Text(
@@ -222,7 +233,8 @@ fun LoginBody() {
             }
 
             Text(
-                "Don't have an account, Signup",
+                text = "Don't have an account, Signup",
+                color = Color.White,
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .clickable {

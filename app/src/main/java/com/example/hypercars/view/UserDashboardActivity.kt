@@ -100,9 +100,9 @@ class UserDashboardActivity : ComponentActivity() {
 
         // Initialize Cloudinary with your credentials
         val cloudinaryConfig = mapOf(
-            "cloud_name" to "your_cloud_name",
-            "api_key" to "your_api_key",
-            "api_secret" to "your_api_secret",
+            "cloud_name" to "dde2pbccs",
+            "api_key" to "944295238457168",
+            "api_secret" to "01BItKSvyAAGIkKEbczBcWKCU5A",
             "secure" to true
         )
         MediaManager.init(this, cloudinaryConfig)
@@ -181,11 +181,11 @@ fun UserDashboardBody(
                                 .clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Giftshop")
+                        Text("VIP Motors")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF4CAF50),
+                    containerColor = Color.Black,
                     titleContentColor = Color.White
                 ),
                 actions = {
@@ -225,7 +225,7 @@ fun UserDashboardBody(
             )
         },
         bottomBar = {
-            NavigationBar(containerColor = Color(0xFF4CAF50)) {
+            NavigationBar(containerColor = Color.Red) {
                 NavigationBarItem(
                     selected = true,
                     onClick = {},
@@ -276,7 +276,7 @@ fun UserDashboardBody(
                         .padding(horizontal = 12.dp, vertical = 4.dp)
                 )
 
-                val categories = listOf("All", "Birthday", "Anniversary", "Occasions", "Others")
+                val categories = listOf("All", "Bugatti", "Konigsegg", "Lamborghini", "Others")
 
                 LazyRow(
                     modifier = Modifier
@@ -303,13 +303,22 @@ fun UserDashboardBody(
                 }
             }
 
-            if (loading) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            } else if (filteredProducts.isEmpty()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("No products found. Please add products to see them here.", color = Color.Gray)
+            if (loading || filteredProducts.isEmpty()) {
+                LazyColumn(modifier = Modifier.padding(8.dp)) {
+                    items(3) { index ->
+                        val cars = listOf(
+                            Triple("Bugatti Chiron", "Top Speed: 420 km/h", "$5,500,000"),
+                            Triple("Konigsegg Jesko", "Top Speed: 483 km/h", "$5,000,000"),
+                            Triple("Lamborghini Sian", "Hybrid V12, 819 HP", "$4,000,000")
+                        )
+                        val images = listOf(
+                            R.drawable.chiron,
+                            R.drawable.jesko,
+                            R.drawable.sian
+                        )
+                        val (name, specs, price) = cars[index]
+                        HardcodedProductCard(name, specs, price, images[index], cartViewModel, wishlistViewModel, context)
+                    }
                 }
             } else {
                 LazyColumn(modifier = Modifier.padding(8.dp)) {
@@ -373,6 +382,85 @@ fun UserHeader(
     }
 }
 
+@Composable
+fun HardcodedProductCard(
+    title: String,
+    subtitle: String,
+    price: String,
+    imageRes: Int,
+    cartViewModel: CartViewModel,
+    wishlistViewModel: WishlistViewModel,
+    context: android.content.Context
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFC8E6C9)
+        ),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+
+            Image(
+                painter = painterResource(id = imageRes),
+                contentDescription = title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(text = title, style = MaterialTheme.typography.titleMedium)
+            Text(text = subtitle, style = MaterialTheme.typography.bodyMedium, color = Color.DarkGray)
+            Text(text = price, style = MaterialTheme.typography.bodyLarge, color = Color(0xFF1B5E20))
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = {
+                        // For hardcoded products, we'll create a simple cart item
+                        val cartItem = CartItemModel(
+                            productId = title.replace(" ", "_").lowercase(),
+                            productName = title,
+                            productPrice = price.replace("$", "").replace(",", "").toDoubleOrNull() ?: 0.0,
+                            image = "",
+                            quantity = 1
+                        )
+                        cartViewModel.addToCart(cartItem)
+                        Toast.makeText(context, "Added to cart", Toast.LENGTH_SHORT).show()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF4CAF50),
+                        contentColor = Color.White
+                    )
+                ) {
+                    Text("Add to Cart")
+                }
+
+                IconButton(onClick = {
+                    val wishlistItem = WishlistItemModel(
+                        productName = title,
+                        productPrice = price.replace("$", "").replace(",", "").toDoubleOrNull() ?: 0.0,
+                        image = ""
+                    )
+                    wishlistViewModel.addToWishlist(wishlistItem)
+                    Toast.makeText(context, "Added to wishlist", Toast.LENGTH_SHORT).show()
+                }) {
+                    Icon(Icons.Default.FavoriteBorder, contentDescription = "Wishlist", tint = Color.Red)
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun ProductCard(

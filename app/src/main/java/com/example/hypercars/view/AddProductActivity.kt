@@ -12,28 +12,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -49,17 +35,18 @@ import com.example.hypercars.utils.ImageUtils
 import com.example.hypercars.viewmodel.ProductViewModel
 
 class AddProductActivity : ComponentActivity() {
-    lateinit var imageUtils: ImageUtils
-    var selectedImageUri by mutableStateOf<Uri?>(null)
+    private lateinit var imageUtils: ImageUtils
+    private var imagePickerCallback: ((Uri?) -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         imageUtils = ImageUtils(this, this)
-        imageUtils.registerLaunchers { uri ->
-            selectedImageUri = uri
-        }
         setContent {
+            var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+            imagePickerCallback = { uri -> selectedImageUri = uri }
+            imageUtils.registerLaunchers { imagePickerCallback?.invoke(it) }
+
             AddProductBody(
                 selectedImageUri = selectedImageUri,
                 onPickImage = { imageUtils.launchImagePicker() }
@@ -77,9 +64,9 @@ fun AddProductBody(
     var pName by remember { mutableStateOf("") }
     var pPrice by remember { mutableStateOf("") }
     var pDesc by remember { mutableStateOf("") }
-    var pCategory by remember { mutableStateOf("Cricket") }
+    var pCategory by remember { mutableStateOf("All") }
 
-    val categories = listOf("All", "Birthday", "Aniversary", "Occasions", "Other")
+    val categories = listOf("All", "Birthday", "Anniversary", "Occasions", "Other")
 
     val repo = remember { ProductRepositoryImpl() }
     val viewModel = remember { ProductViewModel(repo) }
@@ -95,7 +82,11 @@ fun AddProductBody(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(10.dp)
-                .background(color = Color(0xFFA5D6A7)) // light green
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Red, Color.Black)
+                    )
+                )
         ) {
             item {
                 // Image Picker
@@ -120,7 +111,7 @@ fun AddProductBody(
                         )
                     } else {
                         Image(
-                            painterResource(R.drawable.placeholder),
+                            painter = painterResource(id = R.drawable.placeholder),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
@@ -132,7 +123,7 @@ fun AddProductBody(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp),
+                        .padding(10.dp),
                     shape = RoundedCornerShape(12.dp),
                     placeholder = { Text("Product Name") },
                     value = pName,
@@ -143,7 +134,7 @@ fun AddProductBody(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp),
+                        .padding(10.dp),
                     shape = RoundedCornerShape(12.dp),
                     placeholder = { Text("Product Description") },
                     value = pDesc,
@@ -154,7 +145,7 @@ fun AddProductBody(
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp),
+                        .padding(10.dp),
                     shape = RoundedCornerShape(12.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     placeholder = { Text("Product Price") },
@@ -168,7 +159,7 @@ fun AddProductBody(
                     onExpandedChange = { categoryExpanded = !categoryExpanded },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 5.dp)
+                        .padding(horizontal = 10.dp)
                 ) {
                     OutlinedTextField(
                         value = pCategory,
@@ -198,30 +189,33 @@ fun AddProductBody(
                 Button(
                     onClick = {
                         if (selectedImageUri != null) {
-                            viewModel.uploadImage(context, selectedImageUri) { imageUrl ->
-                                if (imageUrl != null) {
-                                    val model = ProductModel(
-                                        "",
-                                        pName,
-                                        pPrice.toDoubleOrNull() ?: 0.0,
-                                        pDesc,
-                                        imageUrl,
-                                        pCategory
-                                    )
-                                    viewModel.addProduct(model) { success, message ->
-                                        Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-                                        if (success) activity?.finish()
+                            try {
+                                viewModel.uploadImage(context, selectedImageUri) { imageUrl ->
+                                    if (imageUrl != null) {
+                                        val product = ProductModel(
+                                            productId = "",
+                                            productName = pName,
+                                            productPrice = pPrice.toDoubleOrNull() ?: 0.0,
+                                            productDescription = pDesc,
+                                            image = imageUrl,
+                                            category = pCategory
+                                        )
+                                        Log.d("Submit", "Product: $product")
+
+                                        viewModel.addProduct(product) { success, message ->
+                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                            if (success) activity?.finish()
+                                        }
+                                    } else {
+                                        Toast.makeText(context, "Image upload failed", Toast.LENGTH_SHORT).show()
                                     }
-                                } else {
-                                    Log.e("Upload Error", "Failed to upload image to Cloudinary")
                                 }
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Failed: ${e.message}", Toast.LENGTH_LONG).show()
+                                Log.e("UploadError", "Exception during upload", e)
                             }
                         } else {
-                            Toast.makeText(
-                                context,
-                                "Please select an image first",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(context, "Please select an image first", Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier
@@ -243,5 +237,3 @@ fun PreviewAddProductBody() {
         onPickImage = {}
     )
 }
-
-
